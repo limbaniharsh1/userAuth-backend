@@ -2,6 +2,8 @@ import Auth from "../models/Auth.js";
 import bcrypt from "bcrypt";
 import * as authValidation from "../validation/auth.js";
 import jwt from "jsonwebtoken";
+import { redisHandler } from "../helper/redisHandler.js";
+const redis = redisHandler();
 
 export const register = async (req, res) => {
   try {
@@ -84,6 +86,29 @@ export const changePassword = async (req, res) => {
     res
       .status(200)
       .json({ message: "password has been changed", success: true });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const logOut = async (req, res) => {
+  try {
+    const { token } = await req.body;
+
+    if (!token) {
+      return res.status(401).json({ message: "invalid token", success: false });
+    }
+
+    const data = redis
+      .setValue("blacklisted", token)
+      .then(() => {
+        return res
+          .status(200)
+          .json({ message: "logout successfull", success: true });
+      })
+      .catch((err) =>
+        res.status().json({ message: err.message, success: false })
+      );
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

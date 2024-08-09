@@ -12,5 +12,6 @@ router.post(
   authValidation.changePassword,
   authRoute.changePassword
 );
+router.post("/logout", authRoute.logOut)
 
 export default router;
