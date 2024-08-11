@@ -95,7 +95,6 @@ export const logOut = async (req, res) => {
   try {
     const { token } = await req.body;
     const { userId } = await jwt.verify(token, process.env.TOKEN_SECRETE);
-    let userTokenData = [];
 
     if (!userId) {
       return res.status(401).json({ message: "invalid token", success: false });
