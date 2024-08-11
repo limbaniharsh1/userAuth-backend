@@ -32,3 +32,12 @@ export const changePassword = (req, res, next) => {
   if (error) return validateResponse(res, error);
   next();
 };
+
+export const token = (req, res, next) => {
+  const validationSchema = Joi.object({
+    token: Joi.string().required(),
+  });
+  const { error } = validationSchema.validate(req.body);
+  if (error) return validateResponse(res, error);
+  next();
+};

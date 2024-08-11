@@ -94,21 +94,20 @@ export const changePassword = async (req, res) => {
 export const logOut = async (req, res) => {
   try {
     const { token } = await req.body;
+    const { userId } = await jwt.verify(token, process.env.TOKEN_SECRETE);
+    let userTokenData = [];
 
-    if (!token) {
+    if (!userId) {
       return res.status(401).json({ message: "invalid token", success: false });
     }
 
-    const data = redis
-      .setValue("blacklisted", token)
-      .then(() => {
-        return res
-          .status(200)
-          .json({ message: "logout successfull", success: true });
-      })
-      .catch((err) =>
-        res.status().json({ message: err.message, success: false })
-      );
+    try {
+      await redis.setValue(userId, token);
+    } catch (error) {
+      console.log(error);
+    }
+
+    res.status(200).json({ message: "successfully logout!", success: true });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
