@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use("/auth", authRoutes);
 // 66a530e0cf27e44272bd9ebc
-// console.log(await redis.getMultiValue("66a530e0cf27e44272bd9ebc"));
+console.log(await redis.getValue("66a530e0cf27e44272bd9ebc"));
 // await redis.flushAll()
 
 connectDb();

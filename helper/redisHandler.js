@@ -24,7 +24,7 @@ export const redisHandler = () => {
   const setValue = async (key, value) => {
     try {
       await connect(); // Reconnect if necessary
-      const uniqueKey = `${key}:${Date.now()}}`;
+      const uniqueKey = `blacklist:${key}:${Date.now()}}`;
       await client.set(uniqueKey, value, {
         EX: process.env.TOKEN_EXPIRE_TIME,
       });
@@ -36,19 +36,8 @@ export const redisHandler = () => {
 
   const getValue = async (key) => {
     try {
-      await connect(); // Reconnect if necessary
-      const response = await client.get(key);
-      console.log(response);
-      return response;
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const getMultiValue = async (key) => {
-    try {
       await connect();
-      const keys = await client.keys(`${key}:*`);
+      const keys = await client.keys(`blacklist:${key}:*`);
       if (keys?.length > 0) {
         const values = await client.mGet(keys);
         return values;
@@ -77,5 +66,5 @@ export const redisHandler = () => {
     }
   };
 
-  return { connect, setValue, getValue, getMultiValue, flushAll, disconnect };
+  return { connect, setValue, getValue, flushAll, disconnect };
 };
